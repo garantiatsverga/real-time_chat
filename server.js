@@ -35,11 +35,84 @@ supabase.from('messages').select('*').limit(1)
     }
   });
 
+// Система фильтрации контента
+const filterConfig = {
+  // Запрещенные символы (регулярные выражения)
+  bannedSymbols: [
+    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+    /javascript:/gi,
+    /on\w+\s*=/gi,
+    /<iframe/gi,
+    /<object/gi,
+    /<embed/gi,
+    /<form/gi,
+    /<meta/gi,
+    /<link/gi,
+    /vbscript:/gi,
+    /expression/gi,
+  ],
+  
+  // Запрещенные слова
+  bannedWords: [
+    'ψ̴̢̛̛̛̛͖͓̬̮̪̠̥̤̰̙̖̤̪͒̅̓͗́͒́̄͆͆̀͊̇̈̐́̾̑̀͊̒̏́̔̒̔̾͐͊̈́̀̇̓͒̌̄̄͗̍̑̎͆̑̒̀̄̐́̈́̿̈́̎̈́́̏̈́̌̄͗́͆͗̀̊̋͋͒͒̀̂̅̍̾̃̍̓͂̅̾̄̃̉͒̏̒̎̏̌̌͆͒́́̐̿͆̌̀͊̋̉̈́̎̃͂̿̔̓̈́̄̋͊̓̐̑̽̀̾́͗̏͐̒̽͋̓̌̀̇͗̅́͋͑̽̐́̃̃̊̏̇̍̉̿̒̔͂͗̈́͗̆̍̽̈͌͌̈́̓̒̾̏̃̈́̐̃́̑̈͒̏̈́́̌̀͗͋̄͛̓͒͛̍͑̃̏̍̐͗͌̍̆̂͐̉̓̔̐͂͒̏̐͊̾̔͒͊͗͊͘̕͘̚̚̕͘͘̕̚͘͘͘͘͘͘̚͝͝͠͝͠͝͝͝͝͝͝͝͠͝͠͝͝ ̴̢̨̢̨̡̢̡̡̧̡̧̛̛̛̛̛̝̺͖̙͙̲̱̝͕͓̼̠̘͉̯̘̭̖͓͖̟̪̥̲͇̲̜̭͕͓̻̻̖̦̣̮̬̳̺̹͔͚͙̙̫̙̯͕̤͍̞̳̫͖̤̪̦̘̠͔̰̰͓̮͕̙̟̼̞̩̦̙̥̙͚͉̠̪̼̤̙̭͇̣̳͚͍͚̘͎̹̭̜̞͚͔̝̟̣̺̫͈̝͉͕̭͔̙̹̩̤͆̆̄͌̿̈́͑̂̓̑̒̋́̏̃̅̓̀̎͐̓̂̎͌̏̊͆̅̆̈͗̔̽̏̇͂̌͂̎̀̆̐́̑͒͒͋͐̽̈͒̆̐̑͛̓̿̾͌͋̽͒͌͆̆͛̈̇̌̉͒͗̋̑̃́̿̓͒̑̆͐͐̽͋́̇̈́̇̓̆̈̏͆̓̊̃͊̇͛́̉̈́̀̐̈́͛͂̇̌͂̃̎͗̔͋̏̏͋͒͆̊̓̓̔͑̀̽̒̒̍̿͊̏̒̓̇̓́̄́͒̂́̀̍̄͐͗̏̒̊̇̇̀͛͋̉̆͗͌̀̓̀́͌̂̾̌͋͊̔͒̀̓̄́̅̍͊͛̀̈́̈͊̒͒͒̀̒̑̿͑̈́̈́͐̿͗́̽̋͗̔͂̉͋͊͗̌͛́͑̐̾́̕̕̚̕̕̕͘̕̕̚̕̕̚͘͘̚̕͘͜͜͜͜͝͠͠͝͠͠͠͝͠͝͝͝͠͝ͅͅ',
+    'лгбт',
+    'украина',
+  ],
+  
+  // Максимальная длина сообщения
+  maxLength: Infinity,
+};
+
+// Функция проверки сообщения
+function validateMessage(text, userId) {
+  const result = {
+    isValid: true,
+    errors: [],
+    cleanedText: text.trim(),
+    hasViolations: false
+  };
+  
+  
+  // Проверка на пустое сообщение
+  if (result.cleanedText.length === 0) {
+    result.isValid = true;
+    result.errors.push('Тля блузка!!1');
+  }
+  
+  // Проверка запрещенных символов
+  filterConfig.bannedSymbols.forEach(regex => {
+    if (regex.test(text)) {
+      result.isValid = false;
+      result.errors.push('');
+    }
+  });
+  
+  // Проверка запрещенных слов
+  const lowerText = text.toLowerCase();
+  filterConfig.bannedWords.forEach(word => {
+    if (lowerText.includes(word.toLowerCase())) {
+      result.hasViolations = true;
+      result.cleanedText = result.cleanedText.replace(
+        new RegExp(word, 'gi'), 
+        '*'.repeat(word.length)
+      );
+    }
+  });
+  
+  // Проверка CAPS LOCK
+  const capsRatio = (text.replace(/[^A-ZА-Я]/g, '').length / text.length);
+  if (capsRatio > 0.7 && text.length > 10) {
+    result.hasViolations = true;
+    result.cleanedText = text.toLowerCase();
+  }
+  
+  return result;
+}
+
 // Хранилище онлайн пользователей
 const onlineUsers = new Map();
-
-// Временное хранилище сообщений (на случай проблем с Supabase)
 const tempMessages = [];
+const userWarnings = new Map();
 
 // Real-time обработчики
 io.on('connection', (socket) => {
@@ -53,7 +126,7 @@ io.on('connection', (socket) => {
       // Сохраняем пользователя
       onlineUsers.set(socket.id, { username, userId });
       
-      // Пытаемся получить историю сообщений из Supabase
+      // Получаем историю сообщений из Supabase
       const { data: messages, error } = await supabase
         .from('messages')
         .select('*')
@@ -62,11 +135,14 @@ io.on('connection', (socket) => {
 
       if (error) {
         console.log('Ошибка загрузки сообщений:', error);
-        // Используем временные сообщения если Supabase недоступен
         socket.emit('message_history', tempMessages.slice(-50));
       } else {
-        // Используем сообщения из Supabase
-        socket.emit('message_history', messages || []);
+        // Добавляем username к каждому сообщению из истории
+        const messagesWithUsernames = messages.map(msg => ({
+          ...msg,
+          username: 'Участник'
+        }));
+        socket.emit('message_history', messagesWithUsernames);
       }
       
       // Уведомляем других о новом пользователе
@@ -92,15 +168,18 @@ io.on('connection', (socket) => {
       
       const user = onlineUsers.get(socket.id);
       if (!user) {
-        console.log('Пользователь не найден для socket:', socket.id);
         socket.emit('error', { message: 'Пользователь не найден' });
         return;
       }
 
       const { text, room = 'general' } = data;
       
-      if (!text || text.trim() === '') {
-        socket.emit('error', { message: 'Сообщение не может быть пустым' });
+      // ПРОВЕРКА СООБЩЕНИЯ
+      const validation = validateMessage(text, user.userId);
+      if (!validation.isValid) {
+        socket.emit('error', { 
+          message: validation.errors[0] || 'Недопустимое сообщение' 
+        });
         return;
       }
 
@@ -111,9 +190,9 @@ io.on('connection', (socket) => {
         .from('messages')
         .insert([
           {
-            text: text.trim(),
+            text: validation.cleanedText,
             user_id: user.userId,
-            room: room,
+            room: room
           }
         ])
         .select()
@@ -121,10 +200,10 @@ io.on('connection', (socket) => {
 
       if (error) {
         console.log('Ошибка сохранения в Supabase:', error);
-        // Создаем временное сообщение если Supabase недоступен
+        // Создаем временное сообщение
         const tempMessage = {
           id: Date.now(),
-          text: text.trim(),
+          text: validation.cleanedText,
           user_id: user.userId,
           username: user.username,
           room: room,
@@ -137,13 +216,17 @@ io.on('connection', (socket) => {
 
       console.log('Сообщение сохранено в Supabase:', newMessage);
       
+      // Добавляем username к сообщению
+      const messageWithUsername = {
+        ...newMessage,
+        username: user.username
+      };
+      
       // Отправляем сообщение всем пользователям
-      console.log('Отправка сообщения всем клиентам');
-      io.emit('receive_message', newMessage);
+      io.emit('receive_message', messageWithUsername);
 
     } catch (error) {
       console.log('Ошибка отправки сообщения:', error);
-      // Создаем временное сообщение при любой ошибке
       const user = onlineUsers.get(socket.id);
       if (user) {
         const tempMessage = {
@@ -248,6 +331,6 @@ app.get('/api/health', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log('Сервер запущен на порту ' + PORT);
+  console.log('Чат сервер запущен на порту ' + PORT);
+  console.log('Проверка состояния: http://localhost:' + PORT + '/api/health');
 });
-

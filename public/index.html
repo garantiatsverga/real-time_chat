@@ -3,125 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Чат с Supabase</title>
+    <title>Dark Chat - Supabase Real-time Чат</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
         
         .chat-container { 
-            max-width: 800px; 
+            max-width: 900px; 
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: #2d2d2d;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+            border: 1px solid #404040;
         }
         
         .header { 
-            background: #3ecf8e; 
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white; 
-            padding: 20px; 
+            padding: 25px 30px;
             text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .connection-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
         }
         
         .online-users { 
-            background: #e8f5e8; 
-            padding: 10px 20px;
-            border-bottom: 1px solid #ddd;
+            background: #363636; 
+            padding: 15px 30px;
+            border-bottom: 1px solid #404040;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .online-count {
+            background: #6366f1;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9em;
         }
         
         .messages { 
-            height: 400px; 
+            height: 500px; 
             overflow-y: auto; 
             padding: 20px;
-            background: #fafafa;
+            background: #1f1f1f;
+            scrollbar-width: thin;
+            scrollbar-color: #6366f1 #2d2d2d;
+        }
+        
+        .messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .messages::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+        
+        .messages::-webkit-scrollbar-thumb {
+            background: #6366f1;
+            border-radius: 3px;
         }
         
         .message { 
-            margin: 10px 0; 
-            padding: 12px; 
-            background: white;
-            border-radius: 8px;
-            border-left: 4px solid #3ecf8e;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 15px 0; 
+            padding: 15px; 
+            background: #363636;
+            border-radius: 12px;
+            border-left: 4px solid #6366f1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+        
+        .message:hover {
+            transform: translateX(5px);
         }
         
         .message-header { 
             display: flex; 
             justify-content: space-between;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-size: 0.9em;
         }
         
-        .username { font-weight: bold; color: #3ecf8e; }
-        .timestamp { color: #666; font-size: 0.8em; }
+        .username { 
+            font-weight: 600; 
+            color: #8b5cf6;
+            font-size: 1em;
+        }
+        
+        .timestamp { 
+            color: #888; 
+            font-size: 0.8em;
+        }
+        
+        .message-text {
+            color: #e0e0e0;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
         
         .system-message { 
-            background: #fff3cd; 
-            border-left-color: #ffc107;
+            background: rgba(99, 102, 241, 0.1); 
+            border-left-color: #8b5cf6;
             text-align: center;
             font-style: italic;
+            color: #a5b4fc;
         }
         
         .typing-indicator { 
-            color: #666; 
+            color: #a5b4fc; 
             font-style: italic; 
-            padding: 5px 20px;
+            padding: 10px 30px;
             min-height: 20px;
+            background: #1f1f1f;
+            border-top: 1px solid #404040;
         }
         
         .input-area { 
-            padding: 20px; 
-            border-top: 1px solid #ddd;
+            padding: 25px 30px; 
+            background: #2d2d2d;
+            border-top: 1px solid #404040;
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            align-items: center;
         }
         
         .message-input { 
             flex: 1; 
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            padding: 15px 20px;
+            background: #1f1f1f;
+            border: 2px solid #404040;
+            border-radius: 25px;
             font-size: 16px;
+            color: #e0e0e0;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .message-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .message-input::placeholder {
+            color: #666;
         }
         
         .send-btn { 
-            padding: 12px 24px;
-            background: #3ecf8e;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 120px;
         }
         
-        .auth-section { padding: 20px; text-align: center; }
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        .send-btn:disabled {
+            background: #404040;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .auth-section { 
+            padding: 40px 30px; 
+            text-align: center;
+            background: #1f1f1f;
+        }
+        
+        .auth-section h3 {
+            margin-bottom: 20px;
+            color: #e0e0e0;
+            font-size: 1.3em;
+        }
+        
         .auth-input { 
-            margin: 5px; 
-            padding: 10px; 
-            width: 200px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            margin: 8px; 
+            padding: 15px 20px;
+            width: 250px;
+            background: #2d2d2d;
+            border: 2px solid #404040;
+            border-radius: 25px;
+            color: #e0e0e0;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-input:focus {
+            border-color: #6366f1;
+        }
+        
+        .auth-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .chat-container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .input-area {
+                padding: 20px;
+            }
+            
+            .messages {
+                height: 400px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="header">
-            <h1>Supabase Real-time Чат</h1>
-            <div id="connectionStatus">Отключен</div>
+            <h1>🌙 Dark Chat</h1>
+            <div class="connection-status" id="connectionStatus">Отключен</div>
+            <p>Real-time чат на Supabase</p>
         </div>
         
         <div id="authSection" class="auth-section">
             <h3>Присоединиться к чату</h3>
-            <input type="text" id="usernameInput" class="auth-input" placeholder="Имя пользователя" value="ТестовыйПользователь">
-            <button onclick="joinChat()">Войти в чат</button>
+            <input type="text" id="usernameInput" class="auth-input" placeholder="Введите ваше имя" value="Участник">
+            <br>
+            <button class="auth-btn" onclick="joinChat()">Войти в чат</button>
         </div>
         
         <div id="chatSection" style="display: none;">
             <div class="online-users">
-                <strong>Онлайн:</strong> 
-                <span id="onlineUsersList">0 пользователей</span>
+                <strong>Сейчас онлайн:</strong> 
+                <span class="online-count" id="onlineUsersList">0</span>
             </div>
             
             <div id="messages" class="messages"></div>
@@ -130,8 +292,9 @@
             
             <div class="input-area">
                 <input type="text" id="messageInput" class="message-input" 
-                       placeholder="Введите ваше сообщение..." onkeypress="handleKeyPress(event)">
-                <button id="sendBtn" class="send-btn" onclick="sendMessage()">Отправить</button>
+                       placeholder="Напишите сообщение..." onkeypress="handleKeyPress(event)"
+                       disabled>
+                <button id="sendBtn" class="send-btn" onclick="sendMessage()" disabled>Отправить</button>
             </div>
         </div>
     </div>
@@ -150,11 +313,25 @@
         const onlineUsersList = document.getElementById('onlineUsersList');
         const typingIndicator = document.getElementById('typingIndicator');
         const connectionStatus = document.getElementById('connectionStatus');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Функция проверки сообщения на клиенте
+        function validateMessage(text) {
+            
+            if (/<[^>]*>/.test(text)) {
+                return { isValid: false, error: 'HTML теги запрещены' };
+            }
+            
+            return { isValid: true, error: null };
+        }
 
         // Присоединение к чату
         function joinChat() {
             const username = document.getElementById('usernameInput').value.trim();
-            if (!username) return;
+            if (!username) {
+                alert('Пожалуйста, введите имя');
+                return;
+            }
 
             // Генерируем случайный ID пользователя
             const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -167,21 +344,24 @@
             // Обработчики событий
             socket.on('connect', () => {
                 connectionStatus.textContent = 'Подключен';
-                connectionStatus.style.color = 'green';
+                connectionStatus.style.background = 'rgba(34, 197, 94, 0.2)';
                 
                 // Присоединяемся к чату
                 socket.emit('join_chat', currentUser);
                 authSection.style.display = 'none';
                 chatSection.style.display = 'block';
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+                messageInput.focus();
             });
 
             socket.on('disconnect', () => {
                 connectionStatus.textContent = 'Отключен';
-                connectionStatus.style.color = 'red';
+                connectionStatus.style.background = 'rgba(239, 68, 68, 0.2)';
             });
 
             socket.on('message_history', (messages) => {
-                console.log('Получена история сообщений:', messages);
+                console.log('Получена история сообщений:', messages.length);
                 messages.forEach(message => displayMessage(message));
                 scrollToBottom();
             });
@@ -200,7 +380,7 @@
             });
 
             socket.on('user_typing', (data) => {
-                typingIndicator.textContent = data.username + ' печатает...';
+                typingIndicator.textContent = '✍️ ' + data.username + ' печатает...';
             });
 
             socket.on('user_stop_typing', () => {
@@ -208,7 +388,7 @@
             });
 
             socket.on('online_users_update', (users) => {
-                onlineUsersList.textContent = users.length + ' пользователей онлайн';
+                onlineUsersList.textContent = users.length;
             });
 
             socket.on('error', (error) => {
@@ -220,6 +400,13 @@
         // Отправка сообщения
         function sendMessage() {
             const text = messageInput.value.trim();
+            const validation = validateMessage(text);
+            
+            if (!validation.isValid) {
+                alert('Ошибка: ' + validation.error);
+                return;
+            }
+            
             if (text && socket) {
                 console.log('Отправка сообщения:', text);
                 socket.emit('send_message', { text });
@@ -236,9 +423,6 @@
             } else if (socket) {
                 socket.emit('typing_start');
                 clearTimeout(typingTimer);
-                typingTimer = setTimeout(() => {
-                    socket.emit('typing_stop');
-                }, 1000);
             }
         }
 
@@ -247,11 +431,14 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
             
-            const timestamp = new Date(message.created_at).toLocaleTimeString();
+            const timestamp = new Date(message.created_at).toLocaleTimeString('ru-RU', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
             
             messageDiv.innerHTML = `
                 <div class="message-header">
-                    <span class="username">${message.username || 'Неизвестный'}</span>
+                    <span class="username">${message.username || 'Участник'}</span>
                     <span class="timestamp">${timestamp}</span>
                 </div>
                 <div class="message-text">${escapeHtml(message.text)}</div>
@@ -278,6 +465,9 @@
             div.textContent = text;
             return div.innerHTML;
         }
+
+        // Фокус на поле ввода при загрузке
+        document.getElementById('usernameInput').focus();
     </script>
 </body>
 </html>
