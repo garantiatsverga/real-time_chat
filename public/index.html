@@ -3,287 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Chat - Supabase Real-time Чат</title>
-    <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        }
-        
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
-            color: #e0e0e0;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .chat-container { 
-            max-width: 900px; 
-            margin: 0 auto;
-            background: #2d2d2d;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            border: 1px solid #404040;
-        }
-        
-        .header { 
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            color: white; 
-            padding: 25px 30px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .header h1 {
-            font-size: 1.8em;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .connection-status {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-        }
-        
-        .online-users { 
-            background: #363636; 
-            padding: 15px 30px;
-            border-bottom: 1px solid #404040;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .online-count {
-            background: #6366f1;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.9em;
-        }
-        
-        .messages { 
-            height: 500px; 
-            overflow-y: auto; 
-            padding: 20px;
-            background: #1f1f1f;
-            scrollbar-width: thin;
-            scrollbar-color: #6366f1 #2d2d2d;
-        }
-        
-        .messages::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .messages::-webkit-scrollbar-track {
-            background: #2d2d2d;
-        }
-        
-        .messages::-webkit-scrollbar-thumb {
-            background: #6366f1;
-            border-radius: 3px;
-        }
-        
-        .message { 
-            margin: 15px 0; 
-            padding: 15px; 
-            background: #363636;
-            border-radius: 12px;
-            border-left: 4px solid #6366f1;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease;
-        }
-        
-        .message:hover {
-            transform: translateX(5px);
-        }
-        
-        .message-header { 
-            display: flex; 
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9em;
-        }
-        
-        .username { 
-            font-weight: 600; 
-            color: #8b5cf6;
-            font-size: 1em;
-        }
-        
-        .timestamp { 
-            color: #888; 
-            font-size: 0.8em;
-        }
-        
-        .message-text {
-            color: #e0e0e0;
-            line-height: 1.4;
-            word-wrap: break-word;
-        }
-        
-        .system-message { 
-            background: rgba(99, 102, 241, 0.1); 
-            border-left-color: #8b5cf6;
-            text-align: center;
-            font-style: italic;
-            color: #a5b4fc;
-        }
-        
-        .typing-indicator { 
-            color: #a5b4fc; 
-            font-style: italic; 
-            padding: 10px 30px;
-            min-height: 20px;
-            background: #1f1f1f;
-            border-top: 1px solid #404040;
-        }
-        
-        .input-area { 
-            padding: 25px 30px; 
-            background: #2d2d2d;
-            border-top: 1px solid #404040;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .message-input { 
-            flex: 1; 
-            padding: 15px 20px;
-            background: #1f1f1f;
-            border: 2px solid #404040;
-            border-radius: 25px;
-            font-size: 16px;
-            color: #e0e0e0;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        
-        .message-input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-        
-        .message-input::placeholder {
-            color: #666;
-        }
-        
-        .send-btn { 
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            min-width: 120px;
-        }
-        
-        .send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-        
-        .send-btn:disabled {
-            background: #404040;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .auth-section { 
-            padding: 40px 30px; 
-            text-align: center;
-            background: #1f1f1f;
-        }
-        
-        .auth-section h3 {
-            margin-bottom: 20px;
-            color: #e0e0e0;
-            font-size: 1.3em;
-        }
-        
-        .auth-input { 
-            margin: 8px; 
-            padding: 15px 20px;
-            width: 250px;
-            background: #2d2d2d;
-            border: 2px solid #404040;
-            border-radius: 25px;
-            color: #e0e0e0;
-            font-size: 16px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        
-        .auth-input:focus {
-            border-color: #6366f1;
-        }
-        
-        .auth-btn {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-        
-        @media (max-width: 768px) {
-            .chat-container {
-                margin: 10px;
-                border-radius: 10px;
-            }
-            
-            .input-area {
-                padding: 20px;
-            }
-            
-            .messages {
-                height: 400px;
-            }
-        }
-    </style>
+    <title>Чат с Supabase</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="chat-container">
         <div class="header">
-            <h1>🌙 Dark Chat</h1>
+            <h1>Supabase Real-time Чат</h1>
             <div class="connection-status" id="connectionStatus">Отключен</div>
-            <p>Real-time чат на Supabase</p>
         </div>
         
         <div id="authSection" class="auth-section">
             <h3>Присоединиться к чату</h3>
-            <input type="text" id="usernameInput" class="auth-input" placeholder="Введите ваше имя" value="Участник">
+            <input type="text" id="usernameInput" class="auth-input" placeholder="Имя пользователя" value="ТестовыйПользователь">
+            <input type="text" id="userIdInput" class="auth-input" placeholder="ID пользователя (опционально)">
             <br>
             <button class="auth-btn" onclick="joinChat()">Войти в чат</button>
+            <div id="authError" class="error-message"></div>
         </div>
         
         <div id="chatSection" style="display: none;">
             <div class="online-users">
-                <strong>Сейчас онлайн:</strong> 
-                <span class="online-count" id="onlineUsersList">0</span>
+                <strong>Онлайн:</strong> 
+                <span id="onlineUsersList">0 пользователей</span>
             </div>
             
             <div id="messages" class="messages"></div>
@@ -292,7 +34,7 @@
             
             <div class="input-area">
                 <input type="text" id="messageInput" class="message-input" 
-                       placeholder="Напишите сообщение..." onkeypress="handleKeyPress(event)"
+                       placeholder="Введите ваше сообщение..." onkeypress="handleKeyPress(event)"
                        disabled>
                 <button id="sendBtn" class="send-btn" onclick="sendMessage()" disabled>Отправить</button>
             </div>
@@ -313,30 +55,26 @@
         const onlineUsersList = document.getElementById('onlineUsersList');
         const typingIndicator = document.getElementById('typingIndicator');
         const connectionStatus = document.getElementById('connectionStatus');
+        const usernameInput = document.getElementById('usernameInput');
+        const userIdInput = document.getElementById('userIdInput');
+        const authError = document.getElementById('authError');
         const sendBtn = document.getElementById('sendBtn');
-
-        // Функция проверки сообщения на клиенте
-        function validateMessage(text) {
-            
-            if (/<[^>]*>/.test(text)) {
-                return { isValid: false, error: 'HTML теги запрещены' };
-            }
-            
-            return { isValid: true, error: null };
-        }
 
         // Присоединение к чату
         function joinChat() {
-            const username = document.getElementById('usernameInput').value.trim();
+            const username = usernameInput.value.trim();
             if (!username) {
-                alert('Пожалуйста, введите имя');
+                showAuthError('Введите имя пользователя');
                 return;
             }
 
-            // Генерируем случайный ID пользователя
-            const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            // Генерируем случайный ID пользователя если не указан
+            const userId = userIdInput.value.trim() || 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             
             currentUser = { username, userId };
+            
+            // Показываем состояние загрузки
+            document.body.classList.add('loading');
             
             // Подключаемся к серверу
             socket = io();
@@ -344,24 +82,37 @@
             // Обработчики событий
             socket.on('connect', () => {
                 connectionStatus.textContent = 'Подключен';
-                connectionStatus.style.background = 'rgba(34, 197, 94, 0.2)';
+                connectionStatus.style.color = 'green';
                 
                 // Присоединяемся к чату
                 socket.emit('join_chat', currentUser);
                 authSection.style.display = 'none';
                 chatSection.style.display = 'block';
+                
+                // Активируем поле ввода сообщения
                 messageInput.disabled = false;
                 sendBtn.disabled = false;
                 messageInput.focus();
+                
+                document.body.classList.remove('loading');
             });
 
             socket.on('disconnect', () => {
                 connectionStatus.textContent = 'Отключен';
-                connectionStatus.style.background = 'rgba(239, 68, 68, 0.2)';
+                connectionStatus.style.color = 'red';
+                messageInput.disabled = true;
+                sendBtn.disabled = true;
+                document.body.classList.remove('loading');
+            });
+
+            socket.on('connect_error', (error) => {
+                showAuthError('Ошибка подключения к серверу: ' + error.message);
+                document.body.classList.remove('loading');
             });
 
             socket.on('message_history', (messages) => {
-                console.log('Получена история сообщений:', messages.length);
+                console.log('Получена история сообщений:', messages);
+                messagesDiv.innerHTML = '';
                 messages.forEach(message => displayMessage(message));
                 scrollToBottom();
             });
@@ -369,6 +120,7 @@
             socket.on('receive_message', (message) => {
                 console.log('Получено новое сообщение:', message);
                 displayMessage(message);
+                scrollToBottom();
             });
 
             socket.on('user_joined', (data) => {
@@ -380,7 +132,7 @@
             });
 
             socket.on('user_typing', (data) => {
-                typingIndicator.textContent = '✍️ ' + data.username + ' печатает...';
+                typingIndicator.textContent = data.username + ' печатает...';
             });
 
             socket.on('user_stop_typing', () => {
@@ -388,31 +140,34 @@
             });
 
             socket.on('online_users_update', (users) => {
-                onlineUsersList.textContent = users.length;
+                const userCount = users.length;
+                const userText = userCount === 1 ? 'пользователь' : 
+                                userCount >= 2 && userCount <= 4 ? 'пользователя' : 'пользователей';
+                onlineUsersList.textContent = `${userCount} ${userText} онлайн`;
+                
+                // Можно также отобразить список имен
+                if (users.length > 0) {
+                    const userNames = users.map(user => user.username).join(', ');
+                    onlineUsersList.title = userNames;
+                }
             });
 
             socket.on('error', (error) => {
                 console.log('Ошибка:', error);
-                alert('Ошибка: ' + error.message);
+                displaySystemMessage('Ошибка: ' + error.message, true);
+                document.body.classList.remove('loading');
             });
         }
 
         // Отправка сообщения
         function sendMessage() {
             const text = messageInput.value.trim();
-            const validation = validateMessage(text);
-            
-            if (!validation.isValid) {
-                alert('Ошибка: ' + validation.error);
-                return;
-            }
-            
             if (text && socket) {
                 console.log('Отправка сообщения:', text);
                 socket.emit('send_message', { text });
                 messageInput.value = '';
                 clearTimeout(typingTimer);
-                typingIndicator.textContent = '';
+                socket.emit('typing_stop');
             }
         }
 
@@ -421,8 +176,8 @@
             if (e.key === 'Enter') {
                 sendMessage();
             } else if (socket) {
+                // Уведомление о наборе текста
                 socket.emit('typing_start');
-                clearTimeout(typingTimer);
             }
         }
 
@@ -431,26 +186,31 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
             
-            const timestamp = new Date(message.created_at).toLocaleTimeString('ru-RU', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            // Проверяем, является ли сообщение нашим
+            if (currentUser && message.user_id === currentUser.userId) {
+                messageDiv.classList.add('my-message');
+            }
+            
+            const timestamp = new Date(message.created_at).toLocaleTimeString();
             
             messageDiv.innerHTML = `
                 <div class="message-header">
-                    <span class="username">${message.username || 'Участник'}</span>
+                    <span class="username">${escapeHtml(message.username || 'Неизвестный')}</span>
                     <span class="timestamp">${timestamp}</span>
                 </div>
                 <div class="message-text">${escapeHtml(message.text)}</div>
             `;
             
             messagesDiv.appendChild(messageDiv);
-            scrollToBottom();
         }
 
-        function displaySystemMessage(text) {
+        function displaySystemMessage(text, isError = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message system-message';
+            if (isError) {
+                messageDiv.style.backgroundColor = '#ffeaea';
+                messageDiv.style.borderLeftColor = '#ff4444';
+            }
             messageDiv.textContent = text;
             messagesDiv.appendChild(messageDiv);
             scrollToBottom();
@@ -466,8 +226,21 @@
             return div.innerHTML;
         }
 
-        // Фокус на поле ввода при загрузке
-        document.getElementById('usernameInput').focus();
+        function showAuthError(message) {
+            authError.textContent = message;
+            authError.style.display = 'block';
+        }
+
+        // Автоматический фокус на поле ввода имени
+        usernameInput.focus();
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                joinChat();
+            }
+        });
+
+        // Автоматический фокус на поле ввода сообщения после входа
+        messageInput.addEventListener('keypress', handleKeyPress);
     </script>
 </body>
 </html>

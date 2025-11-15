@@ -35,7 +35,7 @@ supabase.from('messages').select('*').limit(1)
     }
   });
 
-// Система фильтрации контента
+// Улучшенная система фильтрации контента
 const filterConfig = {
   // Запрещенные символы (регулярные выражения)
   bannedSymbols: [
@@ -56,12 +56,73 @@ const filterConfig = {
   bannedWords: [
     'ψ̴̢̛̛̛̛͖͓̬̮̪̠̥̤̰̙̖̤̪͒̅̓͗́͒́̄͆͆̀͊̇̈̐́̾̑̀͊̒̏́̔̒̔̾͐͊̈́̀̇̓͒̌̄̄͗̍̑̎͆̑̒̀̄̐́̈́̿̈́̎̈́́̏̈́̌̄͗́͆͗̀̊̋͋͒͒̀̂̅̍̾̃̍̓͂̅̾̄̃̉͒̏̒̎̏̌̌͆͒́́̐̿͆̌̀͊̋̉̈́̎̃͂̿̔̓̈́̄̋͊̓̐̑̽̀̾́͗̏͐̒̽͋̓̌̀̇͗̅́͋͑̽̐́̃̃̊̏̇̍̉̿̒̔͂͗̈́͗̆̍̽̈͌͌̈́̓̒̾̏̃̈́̐̃́̑̈͒̏̈́́̌̀͗͋̄͛̓͒͛̍͑̃̏̍̐͗͌̍̆̂͐̉̓̔̐͂͒̏̐͊̾̔͒͊͗͊͘̕͘̚̚̕͘͘̕̚͘͘͘͘͘͘̚͝͝͠͝͠͝͝͝͝͝͝͝͠͝͠͝͝ ̴̢̨̢̨̡̢̡̡̧̡̧̛̛̛̛̛̝̺͖̙͙̲̱̝͕͓̼̠̘͉̯̘̭̖͓͖̟̪̥̲͇̲̜̭͕͓̻̻̖̦̣̮̬̳̺̹͔͚͙̙̫̙̯͕̤͍̞̳̫͖̤̪̦̘̠͔̰̰͓̮͕̙̟̼̞̩̦̙̥̙͚͉̠̪̼̤̙̭͇̣̳͚͍͚̘͎̹̭̜̞͚͔̝̟̣̺̫͈̝͉͕̭͔̙̹̩̤͆̆̄͌̿̈́͑̂̓̑̒̋́̏̃̅̓̀̎͐̓̂̎͌̏̊͆̅̆̈͗̔̽̏̇͂̌͂̎̀̆̐́̑͒͒͋͐̽̈͒̆̐̑͛̓̿̾͌͋̽͒͌͆̆͛̈̇̌̉͒͗̋̑̃́̿̓͒̑̆͐͐̽͋́̇̈́̇̓̆̈̏͆̓̊̃͊̇͛́̉̈́̀̐̈́͛͂̇̌͂̃̎͗̔͋̏̏͋͒͆̊̓̓̔͑̀̽̒̒̍̿͊̏̒̓̇̓́̄́͒̂́̀̍̄͐͗̏̒̊̇̇̀͛͋̉̆͗͌̀̓̀́͌̂̾̌͋͊̔͒̀̓̄́̅̍͊͛̀̈́̈͊̒͒͒̀̒̑̿͑̈́̈́͐̿͗́̽̋͗̔͂̉͋͊͗̌͛́͑̐̾́̕̕̚̕̕̕͘̕̕̚̕̕̚͘͘̚̕͘͜͜͜͜͝͠͠͝͠͠͠͝͠͝͝͝͠͝ͅͅ',
     'лгбт',
-    'украина',
+    '̸̡̡͍̱̲̟̦̘̹͔̺̯̩͍̣͓̣̬̳̭̗̰̜̤͖̥͔̝̦̒̿̌̍̋̔͋̏͌̀̈͗̎͋͛͑̓́̋͐̔̌̄̀̿̆̎͊͆̌͊̀̽̓̈́̈̄̈́͊̉̈́͐̋̂̚̚ͅㅤ̴̢̡̝̹̟͍̝̭̙̞͈͖̗̰̞̭͚̦̟̥̖̮͙͚̻̫͖̦̘̝̥̟͍̳̹̥͕͚̖͓̥̟̗̊̌̏̅̀̍̂̐̐͐̑͆͛̈́̕ ̴̧̢̢̧̡̡͙̼͙̥͈͔̥͙͓̺͖͓̪̭͓̼̫͔̪͔͍̠̟̙͈̌̓͊̈́͊̂͌̂̉̈́͗͑͒̒̀̇͗̃͒̔̒̔̆̾̿̌̾͋̔̓̓́̂̌͛̄̆̀̿̓̐̚͘͝͝͝͠͝͠ͅ ̸̡̡͍̱̲̟̦̘̹͔̺̯̩͍̣͓̣̬̳̭̗̰̜̤͖̥͔̝̦̒̿̌̍̋̔͋̏͌̀̈͗̎͋͛͑̓́̋͐̔̌̄̀̿̆̎͊͆̌͊̀̽̓̈́̈̄̈́͊̉̈́͐̋̂̚̚ͅ',
   ],
   
   // Максимальная длина сообщения
-  maxLength: Infinity,
+  maxMessageLength: Infinity,
+  
+  // Максимальная длина ника
+  maxUsernameLength: 20,
+  
+  // Минимальная длина ника
+  minUsernameLength: 2,
+  
+  // Запрещенные символы в никах
+  bannedUsernameChars: /[<>{}[\]\\|`~!@#$%^&*()+=?.,;:'"/ㅤ̴̢̡̝̹̟͍̝̭̙̞͈͖̗̰̞̭͚̦̟̥̖̮͙͚̻̫͖̦̘̝̥̟͍̳̹̥͕͚̖͓̥̟̗̊̌̏̅̀̍̂̐̐͐̑͆͛̈́̕ ̴̧̢̢̧̡̡͙̼͙̥͈͔̥͙͓̺͖͓̪̭͓̼̫͔̪͔͍̠̟̙͈̌̓͊̈́͊̂͌̂̉̈́͗͑͒̒̀̇͗̃͒̔̒̔̆̾̿̌̾͋̔̓̓́̂̌͛̄̆̀̿̓̐̚͘͝͝͝͠͝͠ͅ ̸̡̡͍̱̲̟̦̘̹͔̺̯̩͍̣͓̣̬̳̭̗̰̜̤͖̥͔̝̦̒̿̌̍̋̔͋̏͌̀̈͗̎͋͛͑̓́̋͐̔̌̄̀̿̆̎͊͆̌͊̀̽̓̈́̈̄̈́͊̉̈́͐̋̂̚̚ͅ'ψ̴̢̛̛̛̛͖͓̬̮̪̠̥̤̰̙̖̤̪͒̅̓͗́͒́̄͆͆̀͊̇̈̐́̾̑̀͊̒̏́̔̒̔̾͐͊̈́̀̇̓͒̌̄̄͗̍̑̎͆̑̒̀̄̐́̈́̿̈́̎̈́́̏̈́̌̄͗́͆͗̀̊̋͋͒͒̀̂̅̍̾̃̍̓͂̅̾̄̃̉͒̏̒̎̏̌̌͆͒́́̐̿͆̌̀͊̋̉̈́̎̃͂̿̔̓̈́̄̋͊̓̐̑̽̀̾́͗̏͐̒̽͋̓̌̀̇͗̅́͋͑̽̐́̃̃̊̏̇̍̉̿̒̔͂͗̈́͗̆̍̽̈͌͌̈́̓̒̾̏̃̈́̐̃́̑̈͒̏̈́́̌̀͗͋̄͛̓͒͛̍͑̃̏̍̐͗͌̍̆̂͐̉̓̔̐͂͒̏̐͊̾̔͒͊͗͊͘̕͘̚̚̕͘͘̕̚͘͘͘͘͘͘̚͝͝͠͝͠͝͝͝͝͝͝͝͠͝͠͝͝ ̴̢̨̢̨̡̢̡̡̧̡̧̛̛̛̛̛̝̺͖̙͙̲̱̝͕͓̼̠̘͉̯̘̭̖͓͖̟̪̥̲͇̲̜̭͕͓̻̻̖̦̣̮̬̳̺̹͔͚͙̙̫̙̯͕̤͍̞̳̫͖̤̪̦̘̠͔̰̰͓̮͕̙̟̼̞̩̦̙̥̙͚͉̠̪̼̤̙̭͇̣̳͚͍͚̘͎̹̭̜̞͚͔̝̟̣̺̫͈̝͉͕̭͔̙̹̩̤͆̆̄͌̿̈́͑̂̓̑̒̋́̏̃̅̓̀̎͐̓̂̎͌̏̊͆̅̆̈͗̔̽̏̇͂̌͂̎̀̆̐́̑͒͒͋͐̽̈͒̆̐̑͛̓̿̾͌͋̽͒͌͆̆͛̈̇̌̉͒͗̋̑̃́̿̓͒̑̆͐͐̽͋́̇̈́̇̓̆̈̏͆̓̊̃͊̇͛́̉̈́̀̐̈́͛͂̇̌͂̃̎͗̔͋̏̏͋͒͆̊̓̓̔͑̀̽̒̒̍̿͊̏̒̓̇̓́̄́͒̂́̀̍̄͐͗̏̒̊̇̇̀͛͋̉̆͗͌̀̓̀́͌̂̾̌͋͊̔͒̀̓̄́̅̍͊͛̀̈́̈͊̒͒͒̀̒̑̿͑̈́̈́͐̿͗́̽̋͗̔͂̉͋͊͗̌͛́͑̐̾́̕̕̚̕̕̕͘̕̕̚̕̕̚͘͘̚̕͘͜͜͜͜͝͠͠͝͠͠͠͝͠͝͝͝͠͝ͅͅ']/g
 };
+
+// Функция проверки ника
+function validateUsername(username) {
+  const result = {
+    isValid: true,
+    errors: [],
+    cleanedUsername: username.trim(),
+    hasViolations: false
+  };
+  
+  // Проверка длины
+  if (result.cleanedUsername.length > filterConfig.maxUsernameLength) {
+    result.isValid = false;
+    result.errors.push(`Слишком длинный ник. Максимум ${filterConfig.maxUsernameLength} символов.`);
+  }
+  
+  if (result.cleanedUsername.length < filterConfig.minUsernameLength) {
+    result.isValid = false;
+    result.errors.push(`Слишком короткий ник. Минимум ${filterConfig.minUsernameLength} символа.`);
+  }
+  
+  // Проверка на пустое сообщение
+  if (result.cleanedUsername.length === 0) {
+    result.isValid = true;
+    result.errors.push('Тля блузка!!1');
+  }
+  
+  // Проверка запрещенных символов
+  if (filterConfig.bannedUsernameChars.test(result.cleanedUsername)) {
+    result.isValid = false;
+    result.errors.push('Ник содержит запрещенные символы.');
+    result.cleanedUsername = result.cleanedUsername.replace(filterConfig.bannedUsernameChars, '');
+  }
+  
+  // Проверка запрещенных слов в нике
+  const lowerUsername = result.cleanedUsername.toLowerCase();
+  filterConfig.bannedWords.forEach(word => {
+    if (lowerUsername.includes(word.toLowerCase())) {
+      result.isValid = false;
+      result.errors.push('Ник содержит запрещенные слова.');
+      result.hasViolations = true;
+    }
+  });
+  
+  // Проверка на только пробелы
+  if (/^\s+$/.test(result.cleanedUsername)) {
+    result.isValid = false;
+    result.errors.push('Ник не может состоять только из пробелов.');
+  }
+  
+  return result;
+}
 
 // Функция проверки сообщения
 function validateMessage(text, userId) {
@@ -89,21 +150,28 @@ function validateMessage(text, userId) {
   
   // Проверка запрещенных слов
   const lowerText = text.toLowerCase();
+  let hasBannedWords = false;
+  
   filterConfig.bannedWords.forEach(word => {
     if (lowerText.includes(word.toLowerCase())) {
       result.hasViolations = true;
-      result.cleanedText = result.cleanedText.replace(
-        new RegExp(word, 'gi'), 
-        '*'.repeat(word.length)
-      );
+      hasBannedWords = true;
+      // Заменяем запрещенные слова на звездочки
+      const regex = new RegExp(word, 'gi');
+      result.cleanedText = result.cleanedText.replace(regex, '*'.repeat(word.length));
     }
   });
+  
+  if (hasBannedWords) {
+    result.errors.push('Обнаружены недопустимые слова. Сообщение будет отфильтровано.');
+  }
   
   // Проверка CAPS LOCK
   const capsRatio = (text.replace(/[^A-ZА-Я]/g, '').length / text.length);
   if (capsRatio > 0.7 && text.length > 10) {
     result.hasViolations = true;
-    result.cleanedText = text.toLowerCase();
+    result.cleanedText = text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    result.errors.push('Избегайте написания заглавными буквами.');
   }
   
   return result;
@@ -123,8 +191,23 @@ io.on('connection', (socket) => {
     try {
       const { username, userId } = userData;
       
+      // ПРОВЕРКА НИКА ПЕРЕД СОХРАНЕНИЕМ
+      const usernameValidation = validateUsername(username);
+      if (!usernameValidation.isValid) {
+        socket.emit('error', { 
+          message: usernameValidation.errors[0] || 'Недопустимое имя пользователя' 
+        });
+        return;
+      }
+      
+      // Используем очищенный ник
+      const cleanUsername = usernameValidation.cleanedUsername;
+      
       // Сохраняем пользователя
-      onlineUsers.set(socket.id, { username, userId });
+      onlineUsers.set(socket.id, { 
+        username: cleanUsername, 
+        userId: userId 
+      });
       
       // Получаем историю сообщений из Supabase
       const { data: messages, error } = await supabase
@@ -140,15 +223,15 @@ io.on('connection', (socket) => {
         // Добавляем username к каждому сообщению из истории
         const messagesWithUsernames = messages.map(msg => ({
           ...msg,
-          username: 'Участник'
+          username: msg.username || 'Участник'
         }));
         socket.emit('message_history', messagesWithUsernames);
       }
       
       // Уведомляем других о новом пользователе
       socket.broadcast.emit('user_joined', {
-        username,
-        message: username + ' присоединился к чату',
+        username: cleanUsername,
+        message: cleanUsername + ' присоединился к чату',
         timestamp: new Date()
       });
 
@@ -192,7 +275,8 @@ io.on('connection', (socket) => {
           {
             text: validation.cleanedText,
             user_id: user.userId,
-            room: room
+            room: room,
+            username: user.username // Теперь сохраняем username в базу
           }
         ])
         .select()
@@ -216,14 +300,8 @@ io.on('connection', (socket) => {
 
       console.log('Сообщение сохранено в Supabase:', newMessage);
       
-      // Добавляем username к сообщению
-      const messageWithUsername = {
-        ...newMessage,
-        username: user.username
-      };
-      
       // Отправляем сообщение всем пользователям
-      io.emit('receive_message', messageWithUsername);
+      io.emit('receive_message', newMessage);
 
     } catch (error) {
       console.log('Ошибка отправки сообщения:', error);
